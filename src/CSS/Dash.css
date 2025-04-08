@@ -1,0 +1,227 @@
+/* Reset some basic styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+}
+
+/* Navbar Styling */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+/* Ensure that the logo image doesn't stretch and fits properly */
+.logo-img {
+  max-height: 45px; /* Set a maximum height for the logo */
+  width: auto; /* Keep the width in auto to maintain aspect ratio */
+  object-fit: contain; /* Prevents stretching of the logo */
+}
+
+.items {
+  display: flex;
+  flex-direction: 1;
+  gap: 38px;
+  align-items: center;
+  padding: 20px 40px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.img {
+  width: max-content;
+}
+
+/* Logo */
+.logo img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Search Bar */
+.search-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* flex-grow:; */
+}
+
+.search-input {
+  /* flex-grow: 1; */
+  border-radius: 20px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  width: 300px;
+}
+
+.search-button {
+  background-color: #f1f1f1;
+  padding: 10px;
+  border-radius: 50%;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.search-button:hover {
+  background-color: #e1e1e1;
+}
+
+.language-selector select {
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+/* Icons */
+.icons {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.like-button,
+.login-register-button {
+  padding: 10px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.like-button i,
+.login-register-button {
+  font-size: 18px;
+}
+.cartype {
+  text-decoration: none;
+}
+
+/* Container for the car selection form */
+.car-box-container {
+  position: absolute;
+  top: 50%;
+  left: 20%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 17px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(187, 182, 182, 0.1);
+  width: 350px;
+  text-align: center;
+}
+.find-your-car-header {
+  font-size: 35px;
+  font-weight: 600;
+  margin-bottom: 80px;
+  text-align: left;
+  color: #000000;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  margin-top: -20%;
+}
+.car-option-button {
+  background-color: #c85f19;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 48%;
+  margin-top: 10px;
+}
+
+.car-option-button:hover {
+  background-color: #e67a15f6;
+}
+
+.radio-group {
+  margin-bottom: 10px;
+}
+
+.radio-label {
+  font-size: 15px;
+  margin: 5px 8px 70px;
+  color: #555;
+}
+
+.radio-label input {
+  margin-right: 10px;
+}
+
+.dropdowns-group {
+  justify-content: space-between;
+  top: -50px;
+}
+.budget-dropdown,
+.vehicle-type-dropdown {
+  width: 60%;
+  padding: 18px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  position: relative;
+}
+
+.img {
+  width: 100%;
+  position: relative;
+}
+
+.img img {
+  width: 100%;
+  height: auto;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .search-container {
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  .icons {
+    margin-top: 10px;
+  }
+
+  .search-button {
+    margin-left: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 10px 20px;
+  }
+
+  .logo img {
+    width: 80%;
+  }
+
+  .search-container {
+    width: 100%;
+  }
+
+  .icons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .like-button,
+  .login-register-button {
+    font-size: 16px;
+  }
+}

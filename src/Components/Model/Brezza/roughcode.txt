@@ -1,298 +1,3 @@
-# https://www.robotstxt.org/robotstxt.html
-User-agent: *
-Disallow:
-........................................
-
-const express = require('express');
-const cors = require('cors');
-const mongoose = require('mongoose');
-require('dotenv').config();
-
-const app = express();
-
-app.use(cors());
-app.use(express.json());
-
-console.log('MONGO_URI from .env:', process.env.MONGO_URI);
-
-mongoose
-  .connect('mongodb://localhost:27017/carDekho')
-  .then(() => console.log(' Connected to MongoDB'))
-  .catch((err) => {
-    console.error('MongoDB connection error:', err);
-    process.exit(1);
-  });
-
-// Define Schema & Model
-const brandSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  imageUrl: { type: String, required: true },
-  link: { type: String },
-});
-
-const Brand = mongoose.model('Brand', brandSchema);
-
-// API to Get Brands
-app.get('/api/brands', async (req, res) => {
-  const { name, imageUrl } = req.body;
-
-  if (!name || !imageUrl) {
-    return res
-      .status(400)
-      .json({ success: false, message: 'All fields are required' });
-  }
-
-  try {
-    const existingBrand = await Brand.findOne({ name });
-    if (existingBrand) {
-      return res
-        .status(400)
-        .json({ success: false, message: 'Brand already exists' });
-    }
-
-    const newBrand = new Brand({
-      name,
-      imageUrl,
-      link: `/cars/${name.replace(/\s+/g, '')}`, // Generate link dynamically
-    });
-
-    await newBrand.save();
-    res.json({ success: true, brand: newBrand });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: 'Error adding brand', error });
-  }
-});
-
-// API to Add Brand
-app.post('/api/add-brand', async (req, res) => {
-  const { name, imageUrl } = req.body;
-
-  if (!name || !imageUrl) {
-    return res
-      .status(400)
-      .json({ success: false, message: 'All fields are required' });
-  }
-
-  try {
-    const newBrand = new Brand({
-      name,
-      imageUrl,
-      link: `/cars/${name.replace(/\s+/g, '')}`, // Generate link dynamically
-    });
-
-    await newBrand.save();
-    // Send only the new brand, not the entire list of brands
-    res.json({ success: true, brand: newBrand });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: 'Error adding brand', error });
-  }
-});
-
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res
-    .status(500)
-    .json({ message: 'Something went wrong!', error: err.message });
-});
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(` Server running on http://localhost:${PORT}`);
-});
-
-......................................04-03-25
-main/////
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import '../Admin/main.css';
-
-const AdminPanel = () => {
-  const [brands, setBrands] = useState([]);
-  const [name, setName] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-
-  // Fetch Brands from Backend
-  useEffect(() => {
-    fetchBrands();
-  });
-
-  const fetchBrands = () => {
-    axios
-      .get('http://localhost:5008/api/brands')
-      .then((response) => {
-        console.log('Fetched brands:', response.data); // Log the fetched data
-        setBrands(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching brands:', error);
-        console.error('Error response:', error.response?.data); // Log the error response
-      });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!name || !imageUrl) {
-      alert('Please fill in all fields.');
-      return;
-    }
-
-    axios
-      .post('http://localhost:5008/api/add-brand', { name, imageUrl })
-      .then((response) => {
-        console.log('Brand added:', response.data);
-        setName('');
-        setImageUrl('');
-        fetchBrands();
-        setSuccessMessage('Brand added successfully!');
-      })
-      .catch((error) => {
-        console.error('Error adding brand:', error);
-      });
-  };
-
-  return (
-    <div className="admin-panel">
-      <div className="sidebar">
-        <h2>Admin </h2>
-        <ul>
-          <li>
-            <a href="#">Dashboard</a>
-          </li>
-          <li>
-            <a href="#">Add Brand</a>
-          </li>
-        </ul>
-      </div>
-
-      {/* Main Content */}
-      <div className="main-content">
-        <h2>Add a New Car Brand</h2>
-
-        {successMessage && <p className="success">{successMessage}</p>}
-
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Brand Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-          <input
-            type="text"
-            placeholder="Image URL"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            required
-          />
-          <button type="submit">Add Brand</button>
-        </form>
-
-        <h2>Existing Brands</h2>
-        <div className="brand-list">
-          {brands.length > 0 ? (
-            brands.map((brand) => (
-              <div key={brand._id} className="brand-item">
-                <img src={brand.imageUrl} alt={brand.name} />
-                <p>{brand.name}</p>
-              </div>
-            ))
-          ) : (
-            <p>No brands found.</p>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default AdminPanel;
-
-
-///server
-const express = require('express');
-const cors = require('cors');
-const mongoose = require('mongoose');
-require('dotenv').config();
-
-const app = express();
-
-app.use(cors({ origin: 'http://localhost:3000' }));
-app.use(express.json());
-
-mongoose
-  .connect('mongodb://localhost:27017/carDekho')
-  .then(() => console.log('Connected to MongoDB'))
-  .catch((err) => {
-    console.error('MongoDB connection error:', err);
-    process.exit(1);
-  });
-
-// Define Schema & Model
-const brandSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  imageUrl: { type: String, required: true },
-  link: { type: String },
-});
-
-const Brand = mongoose.model('Brand', brandSchema);
-
-// API to Get Brands
-app.get('/api/brands', async (req, res) => {
-  try {
-    const brands = await Brand.find(); // Fetch all brands from the database
-    res.json(brands); // Send the list of brands as the response
-  } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: 'Error fetching brands', error });
-  }
-});
-// API to Add Brand
-app.post('/api/add-brand', async (req, res) => {
-  const { name, imageUrl } = req.body;
-
-  if (!name || !imageUrl) {
-    return res
-      .status(400)
-      .json({ success: false, message: 'All fields are required' });
-  }
-
-  try {
-    const newBrand = new Brand({
-      name,
-      imageUrl,
-      link: `/cars/${name.replace(/\s+/g, '')}`,
-    });
-
-    await newBrand.save();
-    // Send only the new brand, not the entire list of brands
-    res.json({ success: true, brand: newBrand });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: 'Error adding brand', error });
-  }
-});
-
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res
-    .status(500)
-    .json({ message: 'Something went wrong!', error: err.message });
-});
-
-const PORT = 5008;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
-
-////////////////brezza
 import React, { useState } from 'react';
 import { Carousel, Card } from 'react-bootstrap'; // Import Carousel from react-bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
@@ -310,6 +15,32 @@ const Fronx = () => {
   const [showModal, setShowModal] = useState(false);
   const [transmission, setTransmission] = useState('all');
 
+  const carimages = [
+    {
+      image:
+        'https://stimg.cardekho.com/images/carexteriorimages/630x420/Maruti/Brezza/10388/1694424068944/front-left-side-47.jpg',
+    },
+    {
+      image:
+        'https://stimg.cardekho.com/images/carexteriorimages/630x420/Maruti/Brezza/10388/1694424068944/rear-left-view-121.jpg',
+    },
+    {
+      image:
+        'https://stimg.cardekho.com/images/carexteriorimages/630x420/Maruti/Brezza/10388/1694424068944/grille-97.jpg',
+    },
+    {
+      image:
+        'https://stimg.cardekho.com/images/carexteriorimages/630x420/Maruti/Brezza/10388/1694424068944/headlight-43.jpg',
+    },
+    {
+      image:
+        'https://stimg.cardekho.com/images/carexteriorimages/630x420/Maruti/Brezza/10388/1694424068944/taillight-44.jpg',
+    },
+    {
+      image:
+        'https://stimg.cardekho.com/images/carexteriorimages/630x420/Maruti/Brezza/10388/1694424068944/side-mirror-(body)-93.jpg',
+    },
+  ];
   const carcolor = [
     {
       name: 'Pearl Arctic White',
@@ -348,32 +79,6 @@ const Fronx = () => {
     },
   ];
 
-  const carimages = [
-    {
-      image:
-        'https://stimg.cardekho.com/images/carexteriorimages/630x420/Maruti/Brezza/10388/1694424068944/front-left-side-47.jpg',
-    },
-    {
-      image:
-        'https://stimg.cardekho.com/images/carexteriorimages/630x420/Maruti/Brezza/10388/1694424068944/rear-left-view-121.jpg',
-    },
-    {
-      image:
-        'https://stimg.cardekho.com/images/carexteriorimages/630x420/Maruti/Brezza/10388/1694424068944/grille-97.jpg',
-    },
-    {
-      image:
-        'https://stimg.cardekho.com/images/carexteriorimages/630x420/Maruti/Brezza/10388/1694424068944/headlight-43.jpg',
-    },
-    {
-      image:
-        'https://stimg.cardekho.com/images/carexteriorimages/630x420/Maruti/Brezza/10388/1694424068944/taillight-44.jpg',
-    },
-    {
-      image:
-        'https://stimg.cardekho.com/images/carexteriorimages/630x420/Maruti/Brezza/10388/1694424068944/side-mirror-(body)-93.jpg',
-    },
-  ];
   const specifications = {
     'key-specification': {
       firstColumn: [
@@ -652,10 +357,10 @@ const Fronx = () => {
                 </div>
 
                 {/* <div className="mt-4">
-                  <p className="text-muted">
-                    Ex-Showroom Price in Mumbai: ₹11,00,000
-                  </p>
-                </div> */}
+                    <p className="text-muted">
+                      Ex-Showroom Price in Mumbai: ₹11,00,000
+                    </p>
+                  </div> */}
               </div>
             </div>
           </div>
@@ -787,10 +492,10 @@ const Fronx = () => {
                 </div>
 
                 {/* <div className="variants mt-4">
-                  {filteredVariants.map((index) => (
-                    <div className="variant-card" key={index}></div>
-                  ))}
-                </div> */}
+                    {filteredVariants.map((index) => (
+                      <div className="variant-card" key={index}></div>
+                    ))}
+                  </div> */}
 
                 <div className="mt-4">
                   <div className="row">
@@ -927,19 +632,3 @@ const Fronx = () => {
 };
 
 export default Fronx;
-.................................................................................................................................
-app.get('/api/cars/brand/:brandId', async (req, res) => {
-  try {
-    console.log('HERE');
-    const brandId = req.params.brandId;
-    console.log({ brandId });
-    const cars = await Car.find({
-      brandId: new mongoose.Types.ObjectId(brandId),
-    }); // Fetch cars that belong to the selected brand
-    console.log({ cars });
-    res.json(cars);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Error fetching cars' });
-  }
-});

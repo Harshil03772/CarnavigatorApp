@@ -1,0 +1,290 @@
+import React, { useState, useEffect } from 'react';
+import { Carousel } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { FaRegThumbsUp, FaShareAlt } from 'react-icons/fa';
+import '../../../CSS/model.css';
+import Nav from '../../Nav';
+import { SiTransmission } from 'react-icons/si';
+
+const Fronx = () => {
+  const [activeTab, setActiveTab] = useState('key-specification');
+  const [variant, setVariant] = useState('all-type');
+  const [selectedVariants, setSelectedVariants] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [transmission, setTransmission] = useState('all');
+  const [variants, setVariants] = useState({});
+  const [specifications, setSpecifications] = useState({
+    'key-specification': {
+      firstColumn: [
+        { label: 'Engine', value: '1462cc' },
+        { label: 'Transmission', value: 'Manual' },
+        { label: 'Fuel', value: 'Petrol' },
+        { label: 'Mileage', value: '17.38 kmpl' },
+      ],
+      secondColumn: [
+        { label: 'Price', value: '₹ 8.54 Lakh*' },
+        { label: 'Variant', value: 'Brezza LXi (Base Model)' },
+        { label: 'Fuel Type', value: 'Petrol' },
+      ],
+    },
+    'top-features': {
+      firstColumn: [
+        { label: 'ABS with EBD', value: 'Yes' },
+        { label: 'LED Projector Headlamps', value: 'Yes' },
+        { label: 'Auto AC', value: 'Yes' },
+      ],
+      secondColumn: [
+        { label: 'Apple CarPlay', value: 'Yes' },
+        { label: 'Android Auto', value: 'Yes' },
+        { label: 'Rear Camera', value: 'Yes' },
+      ],
+    },
+    'stand-out-features': {
+      firstColumn: [
+        { label: 'Sunroof', value: 'Yes' },
+        { label: 'Push Button Start', value: 'Yes' },
+        { label: 'Wireless Charging', value: 'Yes' },
+      ],
+      secondColumn: [
+        { label: 'Leather Upholstery', value: 'Yes' },
+        { label: 'Electric ORVMs', value: 'Yes' },
+      ],
+    },
+  });
+
+  useEffect(() => {
+    const fetchedVariants = {
+      'brezza-lxi': {
+        variant: 'Brezza LXi (Base Model)',
+        engine: '1462cc',
+        transmission: 'Manual',
+        fuel: 'Petrol',
+        mileage: '17.38 kmpl',
+        price: '8.54 Lakh*',
+      },
+      'brezza-lxi-cng': {
+        variant: 'Brezza LXi CNG',
+        engine: '1462cc',
+        transmission: 'Manual',
+        fuel: 'CNG',
+        mileage: '25.51 km/kg',
+        price: '9.49 Lakh*',
+      },
+      'brezza-vxi': {
+        variant: 'Brezza VXi',
+        engine: '1462cc',
+        transmission: 'Manual',
+        fuel: 'Petrol',
+        mileage: '17.38 kmpl',
+        price: '9.70 Lakh*',
+      },
+      'brezza-vxi-cng': {
+        variant: 'Brezza VXi CNG',
+        engine: '1462cc',
+        transmission: 'Manual',
+        fuel: 'CNG',
+        mileage: '25.51 km/kg',
+        price: '10.64 Lakh*',
+      },
+      'brezza-vxi-at': {
+        variant: 'Brezza VXi AT',
+        engine: '1462cc',
+        transmission: 'Automatic',
+        fuel: 'Petrol',
+        mileage: '19.8 kmpl',
+        price: '11.10 Lakh*',
+      },
+      'brezza-zxi': {
+        variant: 'Brezza ZXi (Top Model)',
+        engine: '1462cc',
+        transmission: 'Petrol',
+        fuel: 'Petrol',
+        mileage: '19.89 kmpl',
+        price: '11.14 Lakh*',
+      },
+      'brezza-zxi-plus': {
+        variant: 'Brezza ZXi Plus (Top Model with Extras)',
+        engine: '1462cc',
+        transmission: 'Automatic',
+        fuel: 'Petrol',
+        mileage: '17.38 kmpl',
+        price: '11.54 Lakh*',
+      },
+    };
+
+    setVariants(fetchedVariants);
+  }, []);
+
+  const handleVariantSelection = (variantKey) => {
+    setSelectedVariants((prevVariants) =>
+      prevVariants.includes(variantKey)
+        ? prevVariants.filter((v) => v !== variantKey)
+        : [...prevVariants, variantKey],
+    );
+  };
+
+  const handleComparison = () => {
+    if (selectedVariants.length >= 2) {
+      setShowModal(true);
+    } else {
+      alert('Please select at least two variants for comparison.');
+    }
+  };
+
+  const filteredVariants = Object.keys(variants).filter((key) => {
+    const variantData = variants[key];
+    const isTransmissionMatch =
+      transmission === 'all' || variantData.transmission === transmission;
+
+    const isVariantMatch =
+      variant === 'all-type' || variantData.fuel.toLowerCase() === variant;
+
+    return isTransmissionMatch && isVariantMatch;
+  });
+
+  return (
+    <>
+      <Nav />
+      <div className="container my-5">
+        <div className="row">
+          <div className="col-md-6">
+            <div
+              className="card"
+              style={{ borderRadius: '15px', border: '1px solid #ddd' }}
+            >
+              <Carousel>
+                <Carousel.Item>
+                  <img
+                    className="d-block w-100"
+                    src="https://stimg.cardekho.com/images/carexteriorimages/630x420/Maruti/FRONX/9243/1738296828682/front-left-side-47.jpg?tr=w-664"
+                    alt="First slide"
+                  />
+                </Carousel.Item>
+                <Carousel.Item>
+                  <img
+                    className="d-block w-100"
+                    src="https://stimg.cardekho.com/images/carexteriorimages/630x420/Maruti/FRONX/9243/1673943130006/side-view-(left)-90.jpg?tr=w-664"
+                    alt="Second slide"
+                  />
+                </Carousel.Item>
+                <Carousel.Item>
+                  <img
+                    className="d-block w-100"
+                    src="https://stimg.cardekho.com/images/carexteriorimages/630x420/Maruti/FRONX/9243/1673943130006/rear-left-view-121.jpg?tr=w-664"
+                    alt="Third slide"
+                  />
+                </Carousel.Item>
+              </Carousel>
+            </div>
+          </div>
+
+          <div className="col-md-6">
+            <div
+              className="card"
+              style={{ borderRadius: '15px', border: '1px solid #ddd' }}
+            >
+              <div className="card-body">
+                <div className="d-flex justify-content-between">
+                  <h3 className="card-title">Maruti Suzuki Fronx</h3>
+                  <div className="d-flex ">
+                    <FaRegThumbsUp
+                      className="mr-2"
+                      style={{ cursor: 'pointer' }}
+                    />
+                    <FaShareAlt style={{ cursor: 'pointer' }} />
+                  </div>
+                </div>
+
+                <div className="star-rating">
+                  <span className="text-warning">⭐⭐⭐⭐⭐</span>
+                </div>
+
+                <div>
+                  <h5 className="card-subtitle text-bold mb-3">
+                    ₹ 7.51-13.04 lakh*
+                  </h5>
+
+                  <button className="btn btn-primary mt-3">
+                    Get On Road Price
+                  </button>
+                </div>
+
+                <div className="mt-4">
+                  <p className="text-muted">
+                    Ex-Showroom Price in Mumbai: ₹11,00,000
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-md-12 mt-4">
+            <div
+              className="card"
+              style={{ borderRadius: '15px', border: '1px solid #ddd' }}
+            >
+              <div className="card-body">
+                <h4 className="card-title">Maruti Fronx specs & features</h4>
+                <div className="mt-4">
+                  <div className="tabs">
+                    <button
+                      onClick={() => setActiveTab('key-specification')}
+                      className={`tab-btn ${activeTab === 'key-specification' ? 'active' : ''}`}
+                    >
+                      Key Specification
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('top-features')}
+                      className={`tab-btn ${activeTab === 'top-features' ? 'active' : ''}`}
+                    >
+                      Top Features
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('stand-out-features')}
+                      className={`tab-btn ${activeTab === 'stand-out-features' ? 'active' : ''}`}
+                    >
+                      Stand Out Features
+                    </button>
+                  </div>
+
+                  <div className="specifications mt-4">
+                    <div className="row">
+                      <div className="col">
+                        {Array.isArray(
+                          specifications[activeTab]?.firstColumn,
+                        ) &&
+                          specifications[activeTab].firstColumn.map(
+                            (item, index) => (
+                              <p key={index}>
+                                <strong>{item.label}:</strong> {item.value}
+                              </p>
+                            ),
+                          )}
+                      </div>
+                      <div className="col">
+                        {Array.isArray(
+                          specifications[activeTab]?.secondColumn,
+                        ) &&
+                          specifications[activeTab].secondColumn.map(
+                            (item, index) => (
+                              <p key={index}>
+                                <strong>{item.label}:</strong> {item.value}
+                              </p>
+                            ),
+                          )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* The rest of the code remains the same... */}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default Fronx;

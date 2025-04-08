@@ -1,0 +1,79 @@
+/* Container for the carousel images */
+.carousel-item {
+  justify-content: center;
+  object-fit: cover;
+}
+
+.carousel-item img {
+  border-radius: 15px;
+}
+
+/* .carousel-item {
+  width: 100%; 
+  height: 400px; 
+  overflow: hidden; 
+}
+.carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+} */
+.tabs {
+  display: flex;
+  margin-top: 10px;
+}
+
+.tab-btn {
+  padding: 10px;
+  margin-right: 10px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.tab-btn.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.specifications {
+  padding-top: 20px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.col {
+  width: 45%;
+}
+
+.specifications .row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.specifications .col {
+  display: flex;
+  flex-direction: column;
+}
+
+.specifications .spec-item {
+  /* display: flex; */
+  justify-content: space-between;
+  margin-bottom: 15px; /* Space between items */
+}
+
+.specifications strong {
+  font-weight: 600;
+}
+
+.specifications span {
+  margin-left: 10px; /* Add a gap between label and value */
+}
+
+.specifications ul {
+  padding-left: 20px;
+}
